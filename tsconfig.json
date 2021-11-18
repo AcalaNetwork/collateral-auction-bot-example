@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "lib": ["esnext"],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "target": "esnext",
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "@serverless-bots/config": ["src/packages/config/src"],
+      "@serverless-bots/config/*": ["src/packages/config/src/*"],
+      "@serverless-bots/utils": ["src/packages/utils/src"],
+      "@serverless-bots/utils/*": ["src/packages/utils/src/*"]
+    },
+    "skipLibCheck": true
+  },
+  "include": ["lib", "src", "iam-policy", "test"],
+}
