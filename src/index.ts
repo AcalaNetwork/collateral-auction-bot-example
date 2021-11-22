@@ -25,12 +25,13 @@ export const main = async () => {
   const depositLksm = lksmBal.availableBalance.gte(FixedPointNumber.fromRational(1, 10, 12))
   const repayKusd = kusdBal.availableBalance.gte(new FixedPointNumber(100, 12))
   if (depositLksm || repayKusd) {
+
     const repayAmount = kusdBal.availableBalance.sub(new FixedPointNumber(21)) // -21 kUSD to avoid min debt issue
     logger.info('adjustLoan', {
       LKSM: lksmBal.availableBalance.toString(),
       kUSD: repayAmount.toString(),
     })
-
+    // try to repay all available kUSD to LKSM vault
     await lastValueFrom(await api.adjustLoan('LKSM', lksmBal.availableBalance, repayAmount, pos.debitExchangeRate))
   }
 
@@ -69,6 +70,8 @@ export const main = async () => {
       continue
     }
 
+    // TODO: optional to add auction filters: by collateral types, by prices for collateral, etc
+
     logger.debug('winning bid', auctionInfo.bid.toHuman())
 
     const winner = auctionInfo.bid.isSome && auctionInfo.bid.unwrap()[0]
@@ -89,6 +92,8 @@ export const main = async () => {
     const borrowAmount = target.min(availableAmount)
 
     await firstValueFrom(await api.bid(id, borrowAmount, pos.debitExchangeRate))
+
+    // TODO: handling auction results: for example, if the auction is won -> swap collateral, repay kUSD debt, ...
   }
 }
 
